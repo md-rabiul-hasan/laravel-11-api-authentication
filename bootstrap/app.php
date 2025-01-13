@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\JwtAuthenticate;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -16,7 +17,6 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
     })
     ->withExceptions(function (Exceptions $exceptions) {
 
@@ -46,6 +46,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 'message' => 'Too many requests. Please slow down.',
                 'status_code' => 429,
             ], 429);
+        });
+
+        $exceptions->render(function (Exception $e, Request $request) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'status_code' => 500,
+            ], 500);
         });
 
 
