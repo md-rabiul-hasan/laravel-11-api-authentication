@@ -13,18 +13,28 @@ This is the backend API for the Asset Management Application, built using Larave
 
 ## Installation
 
-```bash
-git clone https://github.com/your-username/asset-management-api.git
-cd asset-management-api
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan migrate
-php artisan db:seed
-php artisan serve
-bun dev
-```
-
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/your-username/asset-management-api.git
+   cd asset-management-api
+2. **Install dependencies:**:
+   ```bash
+   composer install
+3. **Set up environment variables**:
+   ```bash
+   cp .env.example .env
+4. **Generate application key**:
+   ```bash
+   php artisan key:generate
+5. **Run database migrations**:
+   ```bash
+   php artisan migrate
+6. **Seed the database (optional)**:
+   ```bash
+   php artisan db:seed
+7. **Serve the application**:
+   ```bash
+   php artisan serve
 
 ## API Endpoints
 
