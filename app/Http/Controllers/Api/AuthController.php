@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -9,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Exception;
+use Tymon\JWTAuth\Facades\JWTAuth; // JWTAuth for handling token-based authentication.
 
 class AuthController extends Controller
 {
@@ -23,45 +23,49 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // Define validation rules and custom error messages
+        // Validate the request data
         $rules = [
             'employee_id' => 'required|integer', // employee_id is required and must be an integer
         ];
-
+    
         $messages = [
-            'employee_id.required' => 'Please enter employee ID.', // Custom message for missing employee_id
-            'employee_id.integer' => 'The employee ID must be an integer.', // Custom message for invalid employee_id format
+            'employee_id.required' => 'Please enter employee ID.',
+            'employee_id.integer' => 'The employee ID must be an integer.',
         ];
-
+    
         try {
             // Validate the request data
             $request->validate($rules, $messages);
-
+    
             // Retrieve the employee_id from the request
             $employee_id = $request->input('employee_id');
-
+    
             // Find the user by employee_id
             $user = User::select(['id', 'name', 'employee_id'])
                         ->where('employee_id', $employee_id)
                         ->first();
-
+    
             // Check if the user exists
             if (!$user) {
-                return $this->errorApiResponse(404, 'User not found.'); // User not found response
+                return $this->errorApiResponse(404, 'User not found.');
             }
-
-            // Generate a JWT token for the user
-            $token = auth()->login($user);
-
-            // Prepare response data
+    
+            // Generate a JWT token for the user (Access token with 15-minute expiration)
+            $token = auth()->setTTL(intval(env('JWT_TTL')))->login($user); // Set TTL to 15 minutes for access token
+    
+            // Generate the refresh token (Refresh token with 1-day expiration)
+            $refreshToken = auth()->setTTL(intval(env('JWT_REFRESH_TTL')))->refresh(); // Set TTL to 1440 minutes (1 day) for refresh token
+    
+            // Prepare the response data
             $data = [
-                "user"  => $user, // User details
-                "token" => $this->respondWithToken($token), // JWT token details
+                'user' => $user,
+                'access_token' => $this->respondWithToken($token), // Access token details
+                'refresh_token' => $this->respondWithRefreshToken($refreshToken), // Refresh token details
             ];
-
-            // Return success response with user data and token
+    
+            // Return success response with user data, access token, and refresh token
             return $this->successApiResponse(200, "Login Successfully", $data);
-
+    
         } catch (ValidationException $e) {
             // Handle validation errors
             return $this->errorApiResponse(422, $e->validator->errors()->first());
@@ -80,9 +84,24 @@ class AuthController extends Controller
     protected function respondWithToken($token)
     {
         return [
-            'access_token' => $token, // The JWT access token
-            'token_type'   => 'bearer', // Token type
-            'expires_in'   => $this->guard()->factory()->getTTL() * 1, // Token expiration time in seconds
+            'token' => $token,     // The JWT access token
+            'token_type'   => 'bearer',   // Token type
+            'expires_in'   => intval(env('JWT_TTL')) * 60,        // Expiry time in seconds for access token
+        ];
+    }
+
+    /**
+     * Generate a token response structure.
+     *
+     * @param  string $token
+     * @return array
+     */
+    protected function respondWithRefreshToken($token)
+    {
+        return [
+            'token' => $token,     // The JWT access token
+            'token_type'   => 'bearer',   // Token type
+            'expires_in'   => intval(env('JWT_REFRESH_TTL')) * 60,        // Expiry time in seconds for access token
         ];
     }
 
@@ -103,8 +122,11 @@ class AuthController extends Controller
      */
     public function me()
     {
+        $data = [
+            "user" => $this->guard()->user()
+        ];
         // Return the authenticated user's information
-        return response()->json($this->guard()->user());
+        return $this->successApiResponse(200, "User information retrived successfully", $data);
     }
 
     /**
@@ -115,7 +137,10 @@ class AuthController extends Controller
     public function logout()
     {
         try {
-            $this->guard()->logout(); // Invalidate the user's token
+            JWTAuth::getToken(); // Ensures token is already loaded.
+            JWTAuth::invalidate(true);
+            // Invalidate the current JWT token
+            auth()->logout(); // This invalidates the current token
             return $this->successApiResponse(200, "Successfully logged out", []);
         } catch (Exception $e) {
             // Handle unexpected errors
@@ -130,13 +155,21 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        // Prepare refreshed token data
-        $data = [
-            "user"  => $this->guard()->user(), // Authenticated user details
-            "token" => $this->respondWithToken($this->guard()->refresh()), // New token details
-        ];
+        $user = $this->guard()->user();
+        // Generate a JWT token for the user (Access token with 15-minute expiration)
+        $token = auth()->setTTL(intval(env('JWT_TTL')))->login($user); // Set TTL to 15 minutes for access token
+    
+        // Generate the refresh token (Refresh token with 1-day expiration)
+        $refreshToken = auth()->setTTL(intval(env('JWT_REFRESH_TTL')))->refresh(); // Set TTL to 1440 minutes (1 day) for refresh token
 
+
+        // Prepare the response data
+        $data = [
+            'user' => $user,
+            'access_token' => $this->respondWithToken($token), // Access token details
+            'refresh_token' => $this->respondWithRefreshToken($refreshToken), // Refresh token details
+        ];
         // Return success response with refreshed token
-        return $this->successApiResponse(200, "Token Refresh Successfully", $data);
+        return $this->successApiResponse(200, "Token Refreshed Successfully", $data);
     }
 }
