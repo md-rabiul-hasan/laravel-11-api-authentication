@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jan 14, 2025 at 09:21 AM
+-- Generation Time: Feb 06, 2025 at 05:03 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.2.16
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `assetflow_api`
+-- Database: `laravel_api_authentication`
 --
 
 -- --------------------------------------------------------
@@ -38,7 +38,8 @@ CREATE TABLE `cache` (
 --
 
 INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
-('ixqgmryCd8F20A80', 's:7:\"forever\";', 2052204432);
+('2KNBIfburrLQDkeG', 's:7:\"forever\";', 2054177461),
+('s0DV5CyPNlM2rgZy', 's:7:\"forever\";', 2054177480);
 
 -- --------------------------------------------------------
 
@@ -120,10 +121,10 @@ CREATE TABLE `migrations` (
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(4, '0001_01_01_000000_create_users_table', 1),
-(5, '0001_01_01_000001_create_cache_table', 1),
-(6, '0001_01_01_000002_create_jobs_table', 1),
-(7, '2025_01_13_090734_create_personal_access_tokens_table', 1);
+(1, '0001_01_01_000000_create_users_table', 1),
+(2, '0001_01_01_000001_create_cache_table', 1),
+(3, '0001_01_01_000002_create_jobs_table', 1),
+(4, '2025_01_13_090734_create_personal_access_tokens_table', 1);
 
 -- --------------------------------------------------------
 
@@ -180,20 +181,21 @@ CREATE TABLE `sessions` (
 
 CREATE TABLE `users` (
   `id` bigint UNSIGNED NOT NULL,
-  `employee_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `cbs_branch_code` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `role` enum('admin','user') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'user',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email_verified_at` timestamp NULL DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `employee_id`, `name`, `cbs_branch_code`, `role`, `created_at`, `updated_at`) VALUES
-(2, '1467', 'Md.Rabiul Hasan', '0001', 'admin', '2025-01-14 08:45:09', '2025-01-14 08:45:09');
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
+(1, 'Test User', 'test@example.com', '2025-02-06 04:20:40', '$2y$12$tzNDehb50raar/Gx./6dxuTZPUsW03jY6sYFlMrWCgKEUcM6QbSBi', 't9BJx7NwCj', '2025-02-06 04:20:41', '2025-02-06 04:20:41');
 
 --
 -- Indexes for dumped tables
@@ -264,7 +266,7 @@ ALTER TABLE `sessions`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `users_employee_id_unique` (`employee_id`);
+  ADD UNIQUE KEY `users_email_unique` (`email`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -286,7 +288,7 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
@@ -298,7 +300,7 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
