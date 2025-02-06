@@ -38,7 +38,11 @@ This is the backend API for the Asset Management Application, built using Larave
 
 ## API Endpoints
 
-**Base URL**: `http://localhost:82/assetflow-backend-api/api/v1`
+**Base URL**: `http://localhost:8000/api/v1`
+
+## API Documentation URL
+
+**Base URL**: `http://localhost:8000/api/documentation`
 
 ### Authentication
 
