@@ -1,0 +1,306 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Laravel 11 REST API - JWT Authentication",
+        "description": "Comprehensive documentation for the authentication system, providing details on all available endpoints, request parameters, and response structures for secure user authentication.",
+        "contact": {
+            "name": "API Support",
+            "url": "https://yourdomain.com",
+            "email": "support@yourdomain.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api/v1",
+            "description": "Local Development Server for testing and debugging"
+        }
+    ],
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Login with Email and Password",
+                "description": "This login API allows a customer to log in using their email and password.",
+                "operationId": "79470e1e4d9222065432491a36cad427",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "": {
+                                        "properties": {
+                                            "email": {
+                                                "type": "string",
+                                                "format": "email"
+                                            },
+                                            "password": {
+                                                "type": "string",
+                                                "format": "password"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "email": "test@example.com",
+                                    "password": "password"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successfully Login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "status_code": 200,
+                                    "message": "Login Successfully",
+                                    "data": {
+                                        "user": {
+                                            "id": 1,
+                                            "name": "Test User",
+                                            "email": "test@example.com",
+                                            "email_verified_at": "2025-02-06T04:20:40.000000Z",
+                                            "created_at": "2025-02-06T04:20:41.000000Z",
+                                            "updated_at": "2025-02-06T04:20:41.000000Z"
+                                        },
+                                        "access_token": {
+                                            "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+                                            "token_type": "bearer",
+                                            "expires_in": 1800
+                                        },
+                                        "refresh_token": {
+                                            "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+                                            "token_type": "bearer",
+                                            "expires_in": 86400
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid Email or Password",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "example": {
+                                    "success": false,
+                                    "status_code": 401,
+                                    "message": "Invalid email or password."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "example": {
+                                    "success": false,
+                                    "status_code": 400,
+                                    "message": "Please enter email and password"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Log out the authenticated user",
+                "description": "Ends the session for the authenticated user by invalidating their token.",
+                "operationId": "4225227f0399bf5741de5c4133bf9414",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer token",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Logout successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "status_code": 200,
+                                    "message": "Successfully logged out",
+                                    "data": []
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ]
+            }
+        },
+        "/auth/me": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Get authenticated user information",
+                "description": "Retrieve information of the authenticated user by passing a valid bearer token in the Authorization header.",
+                "operationId": "4d68da984122bcdca02dfe929dfed8fe",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer token",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User information retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "status_code": 200,
+                                    "message": "User information retrieved successfully",
+                                    "data": {
+                                        "user": {
+                                            "id": 1467,
+                                            "name": "Md.Rabiul Hasan",
+                                            "email": "test@example.com",
+                                            "email_verified_at": "2025-02-06T04:20:40.000000Z",
+                                            "created_at": "2025-01-14T09:44:29.000000Z",
+                                            "updated_at": "2025-01-14T09:44:29.000000Z"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ]
+            }
+        },
+        "/auth/refresh-token": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Refresh access and refresh tokens",
+                "description": "Generate a new access token and refresh token for the authenticated user using the existing valid refresh token.",
+                "operationId": "9fb07e548fbf1772cd879fc7d853d803",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer token",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Token refreshed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "status_code": 200,
+                                    "message": "Token Refreshed Successfully",
+                                    "data": {
+                                        "user": {
+                                            "id": 1467,
+                                            "name": "Md.Rabiul Hasan",
+                                            "location_id": 1,
+                                            "role": "admin",
+                                            "status": 1,
+                                            "created_at": "2025-01-14T09:44:29.000000Z",
+                                            "updated_at": "2025-01-14T09:44:29.000000Z"
+                                        },
+                                        "access_token": {
+                                            "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+                                            "token_type": "bearer",
+                                            "expires_in": 1800
+                                        },
+                                        "refresh_token": {
+                                            "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+                                            "token_type": "bearer",
+                                            "expires_in": 86400
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "BearerToken": {
+                "type": "http",
+                "description": "Enter your JWT token in the format: Bearer {token}",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Authentication",
+            "description": "Endpoints for user authentication, including login, logout, profile details, and token management."
+        }
+    ]
+}

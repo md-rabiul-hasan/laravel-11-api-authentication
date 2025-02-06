@@ -69,4 +69,34 @@ trait ApiResponseTrait
             "data"        => $data
         ], $httpStatusCode);
     }
+
+     /**
+     * Generate a token response structure.
+     *
+     * @param  string $token
+     * @return array
+     */
+    protected function respondWithToken($token)
+    {
+        return [
+            'token' => $token,     // The JWT access token
+            'token_type'   => 'bearer',   // Token type
+            'expires_in'   => intval(env('JWT_TTL')) * 60,        // Expiry time in seconds for access token
+        ];
+    }
+
+    /**
+     * Generate a token response structure.
+     *
+     * @param  string $token
+     * @return array
+     */
+    protected function respondWithRefreshToken($token)
+    {
+        return [
+            'token' => $token,     // The JWT access token
+            'token_type'   => 'bearer',   // Token type
+            'expires_in'   => intval(env('JWT_REFRESH_TTL')) * 60,        // Expiry time in seconds for access token
+        ];
+    }
 }

@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "0a1756c5-8953-4e1a-afa6-e99582b3cea7",
-		"name": "Assetflow-API (Laravel)",
+		"name": "Laravel-11-Rest-API-Authentication",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "36688702"
 	},
